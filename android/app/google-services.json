@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "524649595552",
+    "firebase_url": "https://english-app-4b4c8.firebaseio.com",
+    "project_id": "english-app-4b4c8",
+    "storage_bucket": "english-app-4b4c8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:524649595552:android:62f19538f5551897",
+        "android_client_info": {
+          "package_name": "buiphukhuyen.english_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "524649595552-7kqa0ts42on9ofiabpnojtqak5ab26rd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2uxSOS4QKMl6nQ9nmV32xvg1xSRVTIrA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "524649595552-7kqa0ts42on9ofiabpnojtqak5ab26rd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "524649595552-l5ks9ev2tnqhm8v8rtq5t5uvpvf4jn4a.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "buiphukhuyen.englishApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
