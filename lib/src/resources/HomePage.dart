@@ -113,7 +113,7 @@ class _HomePageState extends State <HomePage> {
                         bottomLeft: Radius.circular(20.0),
                         bottomRight: Radius.circular(20.0),
                       ),
-                     image: DecorationImage(image: NetworkImage("https://scontent-hkg3-1.xx.fbcdn.net/v/t1.0-9/12341533_459361484264388_7894916608898433832_n.jpg?_nc_cat=103&_nc_oc=AQme9LkboGz8e7bdKl9J4IEXyGLg-VwTCRiWJ-M7UvyEPHa6UpESz4gwfz-FL9tJHtw&_nc_ht=scontent-hkg3-1.xx&oh=563b46dd16d935eb829c1a7910527269&oe=5D6AA9B1"), 
+                     image: DecorationImage(image: AssetImage("Study_Flashcard.png"), 
                      fit:BoxFit.cover) 
                     )    
                   ),
