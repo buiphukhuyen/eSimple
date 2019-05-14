@@ -326,7 +326,7 @@ class _PageLoginState extends State <PageLogin> {
                           Color(0xFFff355d),
                         ],
                         iconData: CustomIcons.googlePlus,
-                        onPressed: bloc.signInGoogle,
+                        onPressed: _loginFacebook,
                       ),
                       SocialIcon(
                         colors: [
@@ -407,4 +407,14 @@ class _PageLoginState extends State <PageLogin> {
                 )); */
       }
     }
-}
+    void _loginFacebook() async {
+     // print('${_emailController.text} , ${_passController.text}');
+      bloc.signInGoogle( () {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => HomePage()));
+    }, (msg) {
+      MassageDialog.showMessageDialog(context, 'Đăng nhập', msg);
+    });
+    }
+ }
+ 

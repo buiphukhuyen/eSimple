@@ -105,8 +105,8 @@ bool isValueInfo(String email, String password) {
     //_firAuth.signInFacebook();
   }
 
-  void signInGoogle() {
-    _firAuth.signInWithGoogle();
+  void signInGoogle(Function onSuccess, Function(String) onLoginSocialError) {
+    _firAuth.signInWithGoogle(onSuccess, onLoginSocialError);
   }
 
   void forgotPassword(String email, Function onSuccess, Function(String) onError) {

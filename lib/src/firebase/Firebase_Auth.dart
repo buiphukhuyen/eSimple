@@ -46,7 +46,7 @@ class FirAuth {
     });
   }
 
-  void signInWithGoogle() async {
+  void signInWithGoogle(Function onSuccess, Function(String) onLoginSocialError)  async {
     final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth = await googleSignInAccount.authentication;
 
@@ -57,8 +57,10 @@ class FirAuth {
 
     final FirebaseUser user = await _fireBaseAuth
       .signInWithCredential(credential);
-      print("signed in " + user.displayName);
-    //return user;
+    if(user!=null) {
+      onSuccess();
+    }
+    print("signed in " + user.displayName);
   }
 
   void signOutWithGoogle() async {
