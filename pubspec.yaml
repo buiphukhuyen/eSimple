@@ -27,7 +27,13 @@ dependencies:
   firebase_auth: ^0.11.0
   firebase_database: ^3.0.0
   google_sign_in: ^4.0.1+3
-
+  flutter_spinkit: "^3.1.0"
+  flip_card: ^0.2.1
+  flutter_facebook_login: ^2.0.1
+  flutter_swiper: ^1.1.6
+  speech_recognition: ^0.3.0+1
+  percent_indicator: "^2.1.0"
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -47,6 +53,9 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/images/Voca/
+    - assets/images/Voca/Country/
+    - assets/images/Speech/
     - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -1,14 +1,12 @@
 import 'dart:async';
 import 'package:english_app/src/firebase/Firebase_Auth.dart';
 import 'package:english_app/src/validators/Validations.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 class AuthBloc {
   var _firAuth = FirAuth();
-  
 
-  //static final FacebookLogin facebookSignIn = new FacebookLogin();
+  static final FacebookLogin facebookSignIn = new FacebookLogin();
 
   StreamController _nameController = new StreamController();
   StreamController _emailController = new StreamController();
@@ -20,24 +18,25 @@ class AuthBloc {
   Stream get passStream => _passController.stream;
   Stream get confirmStream => _confirmController.stream;
 
-bool isValueInfo(String email, String password) {
-    
+  Function(String) get changeEmail => _emailController.sink.add;
+
+  bool isValueInfo(String email, String password) {
     if (!Validations.isValidEmpty(email)) {
       _emailController.sink.addError("Nhập địa chỉ Email");
       return false;
     }
 
-    if(!Validations.isValidEmail(email)) {
+    if (!Validations.isValidEmail(email)) {
       _emailController.sink.addError('Email không đúng định dạng!');
       return false;
     }
 
     _emailController.sink.add('OK');
-    if(!Validations.isValidPassword(password)) {
+    if (!Validations.isValidPassword(password)) {
       _passController.sink.addError('Mật khẩu phải ít nhất 6 ký tự!');
       return false;
     }
-    
+
     _passController.sink.add('OK');
     return true;
   }
@@ -47,7 +46,7 @@ bool isValueInfo(String email, String password) {
       _emailController.sink.addError("Nhập Email");
       return false;
     }
-    if(!Validations.isValidEmail(email)) {
+    if (!Validations.isValidEmail(email)) {
       _emailController.sink.addError('Email không đúng định dạng!');
       return false;
     }
@@ -66,7 +65,7 @@ bool isValueInfo(String email, String password) {
       _emailController.sink.addError("Nhập Email");
       return false;
     }
-    if(!Validations.isValidEmail(email)) {
+    if (!Validations.isValidEmail(email)) {
       _emailController.sink.addError('Email không đúng định dạng!');
       return false;
     }
@@ -78,21 +77,19 @@ bool isValueInfo(String email, String password) {
     }
     _passController.sink.add("OK");
 
-  if (!Validations.isValidPassword(confirm)) {
+    if (!Validations.isValidPassword(confirm)) {
       _confirmController.sink.addError("Mật khẩu phải trên 6 ký tự");
       return false;
-    }
-  else if(confirm != pass) {
-    _confirmController.sink.addError('Mật khẩu không trùng khớp!');
-    return false;
-  }
-  else  
-    _confirmController.sink.add("OK");
+    } else if (confirm != pass) {
+      _confirmController.sink.addError('Mật khẩu không trùng khớp!');
+      return false;
+    } else
+      _confirmController.sink.add("OK");
     return true;
   }
 
-  void signUp(String email, String pass, String name,
-      Function onSuccess, Function(String) onError) {
+  void signUp(String email, String pass, String name, Function onSuccess,
+      Function(String) onError) {
     _firAuth.signUp(email, pass, name, onSuccess, onError);
   }
 
@@ -101,15 +98,20 @@ bool isValueInfo(String email, String password) {
     _firAuth.signIn(email, pass, onSuccess, onSignInError);
   }
 
-  void signInFacebook() {
-    //_firAuth.signInFacebook();
+  void signOut() {
+    _firAuth.signOut();
+  }
+
+  void signInFacebook(Function onSuccess, Function(String) onLoginSocialError) {
+    _firAuth.signInWithFacebook(onSuccess, onLoginSocialError);
   }
 
   void signInGoogle(Function onSuccess, Function(String) onLoginSocialError) {
     _firAuth.signInWithGoogle(onSuccess, onLoginSocialError);
   }
 
-  void forgotPassword(String email, Function onSuccess, Function(String) onError) {
+  void forgotPassword(
+      String email, Function onSuccess, Function(String) onError) {
     _firAuth.forgotPassword(email, onSuccess, onError);
   }
 
