@@ -1,19 +1,74 @@
 import 'package:english_app/src/resources/Homepage/Speech/LessionsUI.dart';
+import 'package:english_app/src/resources/Homepage/Speech/SpeechTopic.dart';
 import 'package:english_app/src/resources/Homepage/Vocabulary/VocaFlashcard.dart';
 import 'package:flutter/material.dart';
 import 'package:english_app/src/resources/widgets/TopBar.dart';
 
 class SpeechMainPage extends StatelessWidget {
   List<LessionsUI> items = [
-    /*LessionsUI(title: "Bài học 1", 'assets/images/Speech/Speech_Topic.png'),
-    LessionsUI("Theo Mẫu câu", 'assets/images/Speech/Speech_Model.png'),
-    LessionsUI("Bài học 1", 'assets/images/Speech/Speech_Topic.png'),
-    LessionsUI("Theo Mẫu câu", 'assets/images/Speech/Speech_Model.png'),*/
     LessionsUI(
-      title: 'Bài học 1',
-      image: 'assets/images/Speech/Speech_Topic.png',
-      percent: '0.1',
-    )
+      lesson: 'Bài học 1',
+      title: '/s/ /sh/ /z/',
+      image: 'assets/images/Speech/Numbers/1.png',
+      color: 0xFFFFc1392b,
+      percent: 0.1,
+    ),
+    LessionsUI(
+      lesson: 'Bài học 2',
+      title: 'Ending sounds',
+      image: 'assets/images/Speech/Numbers/2.png',
+      color: 0xFFFF7e8c8d,
+      percent: 0.2,
+    ),
+    LessionsUI(
+      lesson: 'Bài học 3',
+      title: '/p/ /t/ /k/',
+      image: 'assets/images/Speech/Numbers/3.png',
+      color: 0xFFFF2d3e50,
+      percent: 0.3,
+    ),
+    LessionsUI(
+      lesson: 'Bài học 4',
+      title: 'Schwa sound',
+      image: 'assets/images/Speech/Numbers/4.png',
+      color: 0xFFFFc8f44ad,
+      percent: 0.4,
+    ),
+    LessionsUI(
+      lesson: 'Bài học 5',
+      title: '/p/ /t/ /k/',
+      image: 'assets/images/Speech/Numbers/5.png',
+      color: 0xFFFF16a086,
+      percent: 0.5,
+    ),
+    LessionsUI(
+      lesson: 'Bài học 6',
+      title: 'The /r/ sound',
+      image: 'assets/images/Speech/Numbers/6.png',
+      color: 0xFFFF2a80b9,
+      percent: 0.6,
+    ),
+    LessionsUI(
+      lesson: 'Bài học 7',
+      title: '/L/ /R/',
+      image: 'assets/images/Speech/Numbers/7.png',
+      color: 0xFFFF27ae61,
+      percent: 0.7,
+    ),
+    LessionsUI(
+      lesson: 'Bài học 8',
+      title: '/w/ /v/ /b/',
+      image: 'assets/images/Speech/Numbers/8.png',
+      color: 0xFFFFf39c11,
+      percent: 0.8,
+    ),
+    LessionsUI(
+      lesson: 'Bài học 9',
+      title: '/ʃ/ /ʒ/ /tʃ/ /dʒ/',
+      image: 'assets/images/Speech/Numbers/9.png',
+      color: 0xFFFFd25400,
+      percent: 0.9,
+    ),
   ];
 
   Widget _buildBottomCard(double width, double height) {
@@ -71,11 +126,16 @@ class SpeechMainPage extends StatelessWidget {
     return InkWell(
         onTap: () {
           Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => VocaFlashcard()));
+              .push(MaterialPageRoute(builder: (context) => SpeechTopicPage()));
         },
         child: Padding(
           padding: const EdgeInsets.only(bottom: 10.0),
-          child: LessionsUI(title: item.title, image: item.image),
+          child: LessionsUI(
+            lesson: item.lesson,
+            title: item.title,
+            image: item.image,
+            color: item.color,
+          ),
         ));
   }
 

@@ -1,3 +1,4 @@
+import 'package:english_app/src/resources/Homepage/Speech/LessionsUI.dart';
 import 'package:english_app/src/resources/Homepage/Vocabulary/VocaFlashcard.dart';
 import 'package:flutter/material.dart';
 import 'package:english_app/src/resources/widgets/TopBar.dart';
@@ -9,6 +10,7 @@ class SpeechTopicPage extends StatefulWidget {
 }
 
 class _SpeechTopicPageState extends State<SpeechTopicPage> {
+  LessionsUI item = new LessionsUI();
   SpeechRecognition _speechRecognition;
   bool _isAvailable = false;
   bool _isListening = false;
@@ -117,7 +119,7 @@ class _SpeechTopicPageState extends State<SpeechTopicPage> {
                 )
               ],
             ),
-            TopBar('LUYỆN PHÁT ÂM CHUẨN'),
+            TopBar('BÀI HỌC 1'),
           ],
         ),
       ),

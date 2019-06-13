@@ -56,6 +56,7 @@ flutter:
     - assets/images/Voca/
     - assets/images/Voca/Country/
     - assets/images/Speech/
+    - assets/images/Speech/Numbers/
     - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
