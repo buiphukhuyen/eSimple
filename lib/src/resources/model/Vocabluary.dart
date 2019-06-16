@@ -1,30 +1,26 @@
-class Vocabluary {
-  final String phonetic;
-  final String translate;
-  final String image;
-  final String text;
+import 'package:firebase_database/firebase_database.dart';
 
-  Vocabluary({this.phonetic, this.translate, this.image, this.text});
+class Vocabulary {
+  String name;
+  String phonetic;
+  String translate;
+  String image;
+  String text;
 
-  factory Vocabluary.fromJson(Map<dynamic, dynamic> json) =>
-      _$VocabluaryFromJson(json);
+  Vocabulary(this.name, this.phonetic, this.translate, this.image, this.text);
 
-  Map<String, dynamic> toJson() => _$VocabluaryToJson(this);
-}
-
-Vocabluary _$VocabluaryFromJson(Map<dynamic, dynamic> json) {
-  return Vocabluary(
-    phonetic: json['country']['VietNam']['phonetic'] as String,
-    translate: json['country']['VietNam']['translate'] as String,
-    image: json['country']['VietNam']['image'] as String,
-    text: json['country']['VietNam']['text'] as String,
-  );
-}
-
-Map<dynamic, dynamic> _$VocabluaryToJson(Vocabluary instance) =>
-    <dynamic, dynamic>{
-      'phonetic': instance.phonetic,
-      'translate': instance.translate,
-      'image': instance.image,
-      'text': instance.text
+  Vocabulary.fromSnapshot(DataSnapshot snapshot)
+      : name = snapshot.key,
+        phonetic = snapshot.value["phonetic"],
+        translate = snapshot.value["translate"],
+        image = snapshot.value["image"],
+        text = snapshot.value["text"];
+  toJson() {
+    return {
+      "phonetic": phonetic,
+      "translate": translate,
+      "image": image,
+      "text": text,
     };
+  }
+}
