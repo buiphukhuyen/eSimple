@@ -1,3 +1,4 @@
+import 'package:english_app/src/resources/Homepage/Vocabulary/Flashcard.dart';
 import 'package:english_app/src/resources/Homepage/Vocabulary/VocaFlashcard.dart';
 import 'package:flutter/material.dart';
 import 'package:english_app/src/resources/widgets/TopBar.dart';
@@ -80,7 +81,7 @@ class VocaMainPage extends StatelessWidget {
     return InkWell(
       onTap: () {
         Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => VocaFlashcard()));
+            .push(MaterialPageRoute(builder: (context) => Flashcard()));
       },
       child: Container(
         decoration: BoxDecoration(

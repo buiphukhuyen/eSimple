@@ -26,7 +26,7 @@ class Example2 extends StatelessWidget {
                 Radius.circular(8),
               )),
           child:
-              Center(child: Text("Quay về", style: TextStyle(color: Colors.white))),
+              Center(child: Text("Bỏ qua", style: TextStyle(color: Colors.white))),
         ),
       ),
       
@@ -88,7 +88,7 @@ class Example2 extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(8))),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text("Quay về",
+              child: Text("Bỏ qua",
                   style: TextStyle(
                       color: Colors.red,
                       fontSize: 24,

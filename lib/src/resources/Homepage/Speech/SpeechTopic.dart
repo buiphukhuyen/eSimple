@@ -127,37 +127,8 @@ class _SpeechTopicPageState extends State<SpeechTopicPage> {
   @override
   void dispose() {
     super.dispose();
+    _speechRecognition.stop();
     flutterTts.stop();
-  }
-
-  List<DropdownMenuItem<String>> getLanguageDropDownMenuItems() {
-    var items = List<DropdownMenuItem<String>>();
-    for (String type in languages) {
-      items.add(DropdownMenuItem(value: type, child: Text(type)));
-    }
-    return items;
-  }
-
-  List<DropdownMenuItem<String>> getVoiceDropDownMenuItems() {
-    var items = List<DropdownMenuItem<String>>();
-    for (String type in voices) {
-      items.add(DropdownMenuItem(value: type, child: Text(type)));
-    }
-    return items;
-  }
-
-  void changedLanguageDropDownItem(String selectedType) {
-    setState(() {
-      language = selectedType;
-      flutterTts.setLanguage(language);
-    });
-  }
-
-  void changedVoiceDropDownItem(String selectedType) {
-    setState(() {
-      voice = selectedType;
-      flutterTts.setVoice(voice);
-    });
   }
 
   void _onChange(String text) {
