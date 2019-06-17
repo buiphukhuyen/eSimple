@@ -12,67 +12,19 @@ class SpeechTopicPage extends StatefulWidget {
   _SpeechTopicPageState createState() => _SpeechTopicPageState();
 }
 
-enum TtsState { playing, stopped }
-
 class _SpeechTopicPageState extends State<SpeechTopicPage> {
   LessionsUI item = new LessionsUI();
+  FlutterTts flutterTts = new FlutterTts();
   SpeechRecognition _speechRecognition;
   bool _isAvailable = false;
   bool _isListening = false;
-
+  String textvoice = 'test';
   String resultText = "";
-
-  FlutterTts flutterTts;
-  dynamic languages;
-  dynamic voices;
-  String language;
-  String voice;
-
-  String _newVoiceText;
-
-  TtsState ttsState = TtsState.stopped;
-
-  List<String> items = ['please'];
-
-  get isPlaying => ttsState == TtsState.playing;
-  get isStopped => ttsState == TtsState.stopped;
 
   @override
   initState() {
     super.initState();
-    initTts();
     initSpeechRecognizer();
-  }
-
-  initTts() {
-    flutterTts = FlutterTts();
-
-    if (Platform.isAndroid) {
-      flutterTts.ttsInitHandler(() {
-        _getLanguages();
-        _getVoices();
-      });
-    } else if (Platform.isIOS) {
-      _getLanguages();
-    }
-
-    flutterTts.setStartHandler(() {
-      setState(() {
-        ttsState = TtsState.playing;
-      });
-    });
-
-    flutterTts.setCompletionHandler(() {
-      setState(() {
-        ttsState = TtsState.stopped;
-      });
-    });
-
-    flutterTts.setErrorHandler((msg) {
-      setState(() {
-        ttsState = TtsState.stopped;
-      });
-    });
   }
 
   void initSpeechRecognizer() {
@@ -99,42 +51,10 @@ class _SpeechTopicPageState extends State<SpeechTopicPage> {
         );
   }
 
-  Future _getLanguages() async {
-    languages = await flutterTts.getLanguages;
-    print(language);
-    if (languages != null) setState(() => languages);
-  }
-
-  Future _getVoices() async {
-    voices = await flutterTts.getVoices;
-    if (voices != null) setState(() => voices);
-  }
-
-  Future _speak() async {
-    if (_newVoiceText != null) {
-      if (_newVoiceText.isNotEmpty) {
-        var result = await flutterTts.speak(_newVoiceText);
-        if (result == 1) setState(() => ttsState = TtsState.playing);
-      }
-    }
-  }
-
-  Future _stop() async {
-    var result = await flutterTts.stop();
-    if (result == 1) setState(() => ttsState = TtsState.stopped);
-  }
-
   @override
   void dispose() {
     super.dispose();
     _speechRecognition.stop();
-    flutterTts.stop();
-  }
-
-  void _onChange(String text) {
-    setState(() {
-      _newVoiceText = text;
-    });
   }
 
   @override
@@ -263,35 +183,38 @@ class _SpeechTopicPageState extends State<SpeechTopicPage> {
   Widget inputSection() => Container(
         margin: EdgeInsets.only(left: 20.0, right: 20.0),
         padding:
-            EdgeInsets.only(left: 20.0, right: 20.0, bottom: 50.0, top: 20.0),
+            EdgeInsets.only(left: 20.0, right: 20.0, bottom: 30.0, top: 30.0),
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(7.0)),
-        child: Center(
-          child: TextField(
-            onChanged: (String value) {
-              _onChange(value);
-            },
-          ),
-        ),
+        child: Align(
+            alignment: Alignment.center,
+            child: Text(
+              textvoice,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
+            )),
       );
 
   Widget btnSection() => Container(
-      child: _buildButtonColumn(
-          Colors.green, Colors.greenAccent, Icons.play_arrow, 'PLAY', _speak));
-
-  Widget languageDropDownSection() => Text('en-ZA');
+      child: _buildButtonColumn(Colors.green, Colors.greenAccent,
+          Icons.play_arrow, 'PLAY', textvoice));
 
   Column _buildButtonColumn(Color color, Color splashColor, IconData icon,
-      String label, Function func) {
+      String label, String textvoice) {
     return Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          IconButton(
-              icon: Icon(icon),
+          RaisedButton(
+              child: Icon(
+                icon,
+                color: Colors.white,
+              ),
               color: color,
               splashColor: splashColor,
-              onPressed: () => func()),
+              onPressed: () {
+                print('Vao day');
+                flutterTts.speak(textvoice);
+              }),
           Container(
               child: Text(label,
                   style: TextStyle(

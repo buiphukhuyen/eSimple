@@ -13,8 +13,6 @@ class _VocaFlashcardState extends State<VocaFlashcard> {
   Vocabulary item;
   DatabaseReference itemRef;
 
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
   @override
   void initState() {
     super.initState();
@@ -49,7 +47,8 @@ class _VocaFlashcardState extends State<VocaFlashcard> {
                       Text('[' + items[index].phonetic + ']')
                     ],
                   );
-                }))
+                })
+                )
         ],
       ),
     );
