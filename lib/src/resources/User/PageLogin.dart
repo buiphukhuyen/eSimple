@@ -3,6 +3,7 @@ import 'package:english_app/src/resources/User/ForgotPassword.dart';
 import 'package:english_app/src/resources/Homepage/HomePage.dart';
 import 'package:english_app/src/resources/dialog/Loading_Dialog.dart';
 import 'package:english_app/src/resources/dialog/Massage_Dialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:english_app/src/resources/User/PageRegister.dart';
@@ -16,6 +17,19 @@ class PageLogin extends StatefulWidget {
 }
 
 class _PageLoginState extends State<PageLogin> {
+  @override
+  void initState() {
+    FirebaseAuth.instance.currentUser().then((user) {
+      if (user != null) {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+            (Route<dynamic> route) => false);
+      }
+    });
+    super.initState();
+  }
+
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _passController = new TextEditingController();
 
