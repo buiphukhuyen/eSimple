@@ -24,17 +24,18 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   flutter_screenutil: ^0.5.2
-  firebase_auth: ^0.11.1+6
-  firebase_database: ^3.0.2
-  google_sign_in: ^4.0.1+3
+  firebase_auth: ^0.11.1+7
+  firebase_database: ^3.0.3
+  google_sign_in: ^4.0.2
   flutter_spinkit: ^3.1.0
   flip_card: ^0.3.0
   flutter_facebook_login: ^2.0.1
   flutter_swiper: ^1.1.6
   speech_recognition: ^0.3.0+1
-  percent_indicator: "^2.1.0"
-  flutter_tts: ^0.2.4
+  percent_indicator: ^2.1.0
+  flutter_tts: ^0.2.6
   fluttery: ^0.0.8
+  transparent_image: ^1.0.0
   
 dev_dependencies:
   flutter_test:
@@ -59,7 +60,7 @@ flutter:
     - assets/images/Voca/Country/
     - assets/images/Speech/
     - assets/images/Speech/Numbers/
-    - assets/icons/
+    
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

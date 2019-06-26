@@ -1,5 +1,8 @@
 import 'dart:io';
 
+import 'package:english_app/src/resources/Homepage/HomePage.dart';
+import 'package:english_app/src/resources/dialog/Loading_Dialog.dart';
+import 'package:english_app/src/resources/dialog/Massage_Dialog.dart';
 import 'package:english_app/src/resources/model/Vocabluary.dart';
 import 'package:english_app/src/resources/widgets/TopBar.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -7,6 +10,7 @@ import 'package:flip_card/flip_card.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class Flashcard extends StatefulWidget {
   @override
@@ -18,14 +22,19 @@ class _FlashcardState extends State<Flashcard> {
   List<Vocabulary> items = List();
   Vocabulary item;
   DatabaseReference itemRef;
+  bool test = false;
 
   @override
   void initState() {
+    //MassageDialog.showMessageDialog(context, 'Đang tải dữ liệu', "Vui lòng đợi");
+
     super.initState();
+
     item = Vocabulary("", "", "", "", "");
     final FirebaseDatabase database = FirebaseDatabase.instance;
     itemRef = database.reference().child('vocabulary').child('country');
     itemRef.onChildAdded.listen(_onEntryAdded);
+    //LoadingDialog.hideLoadingDialog(context);
   }
 
   _onEntryAdded(Event event) {
@@ -44,7 +53,29 @@ class _FlashcardState extends State<Flashcard> {
           borderRadius: BorderRadius.only(
               topRight: Radius.elliptical(32.0, 10.0),
               topLeft: Radius.elliptical(32.0, 10.0))),
-      //child: _buildBottomCardChildren(),
+      child: test
+          ? Container(
+              padding: EdgeInsets.only(
+                  top: 120.0, bottom: 60.0, right: 70.0, left: 70.0),
+              child: RaisedButton(
+                child: Column(
+                  children: <Widget>[
+                    Icon(
+                      Icons.check,
+                      size: 60.0,
+                      color: Colors.blue,
+                    ),
+                    Text(
+                      'Kiểm tra từ vựng',
+                      style: TextStyle(fontSize: 18.0),
+                    ),
+                  ],
+                ),
+                color: Colors.white,
+                onPressed: () {},
+              ),
+            )
+          : Container(),
     );
   }
 
@@ -66,7 +97,10 @@ class _FlashcardState extends State<Flashcard> {
               ),
               IconButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                  );
                 },
                 icon: Icon(Icons.home),
                 color: Colors.white,
@@ -121,13 +155,30 @@ class _FlashcardState extends State<Flashcard> {
                         children: <Widget>[
                           Padding(
                             padding: const EdgeInsets.all(14.0),
-                            child: Image.network(items[index].image),
+                            child: FadeInImage.memoryNetwork(
+                              placeholder: kTransparentImage,
+                              image: items[index].image,
+                            ),
                           ),
                           Text(
                             items[index].name,
                             style: TextStyle(
                                 fontSize: 25.0, fontWeight: FontWeight.bold),
                           ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                '${index + 1}',
+                                style: TextStyle(
+                                    fontSize: 23,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red),
+                              ),
+                              Text('/' + '${items.length}')
+                            ],
+                          )
                         ],
                       ),
                     ),
@@ -181,11 +232,24 @@ class _FlashcardState extends State<Flashcard> {
                     ),
                   );
                 },
+                control: new SwiperControl(),
                 loop: false,
                 pagination: new SwiperPagination(),
                 itemCount: items.length,
                 viewportFraction: 0.8,
                 scale: 0.6,
+                onIndexChanged: (int index) {
+                  print('$index');
+                  if (index == items.length - 1) {
+                    setState(() {
+                      test = true;
+                    });
+                  } else {
+                    setState(() {
+                      test = false;
+                    });
+                  }
+                },
               ),
             ),
           ],

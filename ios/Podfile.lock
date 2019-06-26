@@ -166,9 +166,9 @@ SPEC CHECKSUMS:
   FBSDKCoreKit: f442aa96179cc9b382bb4abeb7e340a47cca8f91
   FBSDKLoginKit: c3079d9a4db27c492287b1eed7a4272b28cf8a59
   Firebase: 5965bac23e7fcb5fa6d926ed429c9ecef8a2014e
-  firebase_auth: 7a2cc520766f90212b845a5b35316601707bfa25
-  firebase_core: ce5006bb48508ee4e71e0f429a3f519bb8ee2961
-  firebase_database: 99b15d6a0536ee969200b6eaf69bcd0b15b7b114
+  firebase_auth: ba238762663f6b3503cc5468c50d652df1306185
+  firebase_core: 44f31f51532812598f0f9f4af0caa705b9edfc19
+  firebase_database: 083e0cc5badd5f5dde7d22eaca980b42b199f59e
   FirebaseAnalytics: 629301c2b9925f3537d4093a17a72751ae5b7084
   FirebaseAuth: 80879f0e9f2c5f40686d5b42f6ccb3cd5dce78ea
   FirebaseAuthInterop: 0ffa57668be100582bb7643d4fcb7615496c41fc

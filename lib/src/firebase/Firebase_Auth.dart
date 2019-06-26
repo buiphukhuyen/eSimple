@@ -86,8 +86,10 @@ class FirAuth {
   void signInWithFacebook(
       Function onSuccess, Function(String) onLoginSocialError) async {
     final facebookLogin = FacebookLogin();
-    final result = await facebookLogin.logInWithReadPermissions(['email']);
-
+    final result = await facebookLogin
+        .logInWithReadPermissions(['email']).catchError((err) {
+      print("Lỗi nè: " + err.toString());
+    });
     final AuthCredential credential = FacebookAuthProvider.getCredential(
       accessToken: result.accessToken.token,
     );

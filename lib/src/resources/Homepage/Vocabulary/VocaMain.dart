@@ -1,29 +1,34 @@
+import 'package:english_app/src/resources/Homepage/HomePage.dart';
 import 'package:english_app/src/resources/Homepage/Vocabulary/Flashcard.dart';
-import 'package:english_app/src/resources/Homepage/Vocabulary/VocaFlashcard.dart';
+import 'package:english_app/src/resources/model/TopicVoca.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:english_app/src/resources/widgets/TopBar.dart';
 
-class VocaMainPage extends StatelessWidget {
-  List<itemModel> items = [
-    itemModel(
-        1, "Các Quốc gia", 'assets/images/Voca/Voca_Country.png', 12, 1830),
-    itemModel(2, "Thời tiết", 'assets/images/Voca/Voca_Weather.png', 4, 883),
-    itemModel(3, "Gia đình", 'assets/images/Voca/Voca_Family.png', 2, 326),
-    itemModel(4, "Nghề nghiệp", 'assets/images/Voca/Voca_Job.png', 2, 326),
-    itemModel(5, "Các hoạt động thường ngày",
-        'assets/images/Voca/Voca_Activity.png', 2, 326),
-    itemModel(6, "Đồ ăn", 'assets/images/Voca/Voca_Food.png', 2, 326),
-  ];
+class VocaMainPage extends StatefulWidget {
+  @override
+  _VocaMainPageState createState() => _VocaMainPageState();
+}
 
-  Widget _buildTitle() {
-    return Text(
-      'HỌC TỪ VỰNG - FLASHCARD',
-      style: TextStyle(
-        fontSize: 20.0,
-        color: Colors.black,
-        fontFamily: "SFUIText-Bold",
-      ),
-    );
+class _VocaMainPageState extends State<VocaMainPage> {
+  List<TopicVoca> items = List();
+  TopicVoca item;
+  DatabaseReference itemRef;
+
+  @override
+  void initState() {
+    super.initState();
+    item = TopicVoca("", 0, "", "", 0, 0);
+    final FirebaseDatabase database = FirebaseDatabase.instance;
+    itemRef = database.reference().child('vocabulary');
+    itemRef.onChildAdded.listen(_onEntryAdded);
+    print('${item.name}');
+  }
+
+  _onEntryAdded(Event event) {
+    setState(() {
+      items.add(TopicVoca.fromSnapshot(event.snapshot));
+    });
   }
 
   Widget _buildBottomCard(double width, double height) {
@@ -58,7 +63,10 @@ class VocaMainPage extends StatelessWidget {
               ),
               IconButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                  );
                 },
                 icon: Icon(Icons.home),
                 color: Colors.white,
@@ -77,7 +85,7 @@ class VocaMainPage extends StatelessWidget {
     );
   }
 
-  Widget _buildItemCardChild(itemModel item, BuildContext context) {
+  Widget _buildItemCardChild(TopicVoca item, BuildContext context) {
     return InkWell(
       onTap: () {
         Navigator.of(context)
@@ -86,7 +94,7 @@ class VocaMainPage extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-              image: AssetImage(item.image),
+              image: NetworkImage(item.image),
               fit: BoxFit.scaleDown,
               alignment: Alignment.bottomCenter),
         ),
@@ -97,7 +105,7 @@ class VocaMainPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    item.title,
+                    item.name,
                     style: TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold,
@@ -113,14 +121,14 @@ class VocaMainPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  item.numOne.toString(),
+                  item.length.toString(),
                   style: TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  item.numTwo.toString(),
+                  item.percent.toString(),
                   style: TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
@@ -134,7 +142,7 @@ class VocaMainPage extends StatelessWidget {
     );
   }
 
-  Widget _buildItemCart(itemModel item, BuildContext context) {
+  Widget _buildItemCart(TopicVoca item, BuildContext context) {
     return Container(
       width: 100.0,
       height: 185.0,
@@ -183,13 +191,4 @@ class VocaMainPage extends StatelessWidget {
       ),
     );
   }
-}
-
-class itemModel {
-  final int index;
-  final String title;
-  final String image;
-  final int numOne;
-  final int numTwo;
-  itemModel(this.index, this.title, this.image, this.numOne, this.numTwo);
 }
