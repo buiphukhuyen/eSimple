@@ -1,8 +1,5 @@
-import 'dart:io';
-
+import 'package:audioplayers/audio_cache.dart';
 import 'package:english_app/src/resources/Homepage/HomePage.dart';
-import 'package:english_app/src/resources/dialog/Loading_Dialog.dart';
-import 'package:english_app/src/resources/dialog/Massage_Dialog.dart';
 import 'package:english_app/src/resources/model/Vocabluary.dart';
 import 'package:english_app/src/resources/widgets/TopBar.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -23,6 +20,7 @@ class _FlashcardState extends State<Flashcard> {
   Vocabulary item;
   DatabaseReference itemRef;
   bool test = false;
+  AudioCache audioCache = new AudioCache();
 
   @override
   void initState() {
@@ -35,6 +33,9 @@ class _FlashcardState extends State<Flashcard> {
     itemRef = database.reference().child('vocabulary').child('country');
     itemRef.onChildAdded.listen(_onEntryAdded);
     //LoadingDialog.hideLoadingDialog(context);
+
+    //PlayMusic
+    audioCache.loop("audio/background.mp3");
   }
 
   _onEntryAdded(Event event) {
@@ -230,6 +231,9 @@ class _FlashcardState extends State<Flashcard> {
                         ],
                       ),
                     ),
+                    onFlip: () {
+                      audioCache.play("audio/flipcard.mp3", volume: 0.2);
+                    },
                   );
                 },
                 control: new SwiperControl(),

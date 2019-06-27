@@ -14,7 +14,7 @@ description: A new Flutter application.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   flutter:
@@ -36,6 +36,7 @@ dependencies:
   flutter_tts: ^0.2.6
   fluttery: ^0.0.8
   transparent_image: ^1.0.0
+  audioplayers: ^0.13.0
   
 dev_dependencies:
   flutter_test:
@@ -60,7 +61,7 @@ flutter:
     - assets/images/Voca/Country/
     - assets/images/Speech/
     - assets/images/Speech/Numbers/
-    
+    - assets/audio/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

@@ -1,5 +1,6 @@
-import 'dart:io';
+import 'dart:math';
 
+import 'package:audioplayers/audio_cache.dart';
 import 'package:english_app/src/resources/Homepage/Speech/LessionsUI.dart';
 import 'package:flutter/material.dart';
 import 'package:english_app/src/resources/widgets/TopBar.dart';
@@ -17,8 +18,18 @@ class _SpeechTopicPageState extends State<SpeechTopicPage> {
   SpeechRecognition _speechRecognition;
   bool _isAvailable = false;
   bool _isListening = false;
-  String textvoice = 'test';
+  List<String> textlist = [
+    'please',
+    'excuse me',
+    'sorry',
+    'should',
+    'you should take some time off'
+  ];
+  int indexs = 0;
   String resultText = "";
+  int result = 0;
+  bool finish = false;
+  AudioCache audioCache = new AudioCache();
 
   @override
   initState() {
@@ -56,6 +67,59 @@ class _SpeechTopicPageState extends State<SpeechTopicPage> {
     _speechRecognition.stop();
   }
 
+  Widget checkResult() {
+    if (result == 0) {
+      return Container();
+    } else if (result == 2) {
+      return Column(
+        children: <Widget>[
+          SizedBox(
+            height: 10,
+          ),
+          Image.asset(
+            "assets/images/Correct.png",
+            height: 90,
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+            'Phát âm đúng!',
+            style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.blueGrey),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+        ],
+      );
+    } else
+      return Column(
+        children: <Widget>[
+          SizedBox(
+            height: 10,
+          ),
+          Image.asset(
+            "assets/images/Wrong.png",
+            height: 90,
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Text('Phát âm sai!',
+              style: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red)),
+          SizedBox(
+            height: 10,
+          ),
+        ],
+      );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,8 +151,16 @@ class _SpeechTopicPageState extends State<SpeechTopicPage> {
                     SizedBox(
                       height: 20.0,
                     ),
-                    btnSection(),
-                    SizedBox(height: 30.0),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        btnSection(),
+                        if (result == 2 && finish==false) btnNext(),
+                        if (finish == true) btnFinish(),
+                      ],
+                    ),
+                    SizedBox(height: 20.0),
                     Text(
                       'Kết quả',
                       style: TextStyle(
@@ -96,13 +168,13 @@ class _SpeechTopicPageState extends State<SpeechTopicPage> {
                           fontWeight: FontWeight.bold,
                           color: Colors.red[500]),
                     ),
+                    SizedBox(height: 20.0),
                     Container(
-                      margin: EdgeInsets.all(10.0),
-                      padding: EdgeInsets.only(bottom: 150.0),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(7.0)),
-                    ),
+                        padding: EdgeInsets.only(right: 100.0, left: 100.0),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(7.0)),
+                        child: checkResult()),
                   ]),
                 ),
               ),
@@ -123,9 +195,9 @@ class _SpeechTopicPageState extends State<SpeechTopicPage> {
                         if (_isListening)
                           _speechRecognition.cancel().then(
                                 (result) => setState(() {
-                                      _isListening = result;
-                                      resultText = "";
-                                    }),
+                                  _isListening = result;
+                                  resultText = "";
+                                }),
                               );
                       },
                     ),
@@ -137,20 +209,46 @@ class _SpeechTopicPageState extends State<SpeechTopicPage> {
                           _speechRecognition
                               .listen(locale: "en_US")
                               .then((result) => print('$result'));
+                        setState(() {
+                          result = 0;
+                        });
                       },
                       backgroundColor: Colors.pink,
                     ),
                     FloatingActionButton(
                       heroTag: null,
-                      child: Icon(Icons.stop),
+                      child: Icon(Icons.check),
                       mini: true,
-                      backgroundColor: Colors.deepPurple,
+                      backgroundColor: Colors.blue,
                       onPressed: () {
                         if (_isListening)
-                          _speechRecognition.stop().then(
-                                (result) =>
-                                    setState(() => _isListening = result),
-                              );
+                          setState(() {
+                            result = 0;
+                          });
+                        _speechRecognition.stop().then(
+                              (result) => setState(() => _isListening = result),
+                            );
+
+                        if (resultText.toUpperCase() ==
+                            textlist[indexs].toUpperCase()) {
+                          print('Phát âm đúng');
+                          setState(() {
+                            result = 2;
+                            audioCache.play("audio/correct.mp3");
+                          });
+                        } else {
+                          print('Phát âm sai');
+                          setState(() {
+                            result = 3;
+                            audioCache.play("audio/wrong.mp3");
+                          });
+                        }
+                        print('$indexs' + '${textlist.length}');
+                        if (indexs == textlist.length - 1 && result == 2) {
+                          setState(() {
+                            finish = true;
+                          });
+                        }
                       },
                     ),
                   ],
@@ -186,19 +284,43 @@ class _SpeechTopicPageState extends State<SpeechTopicPage> {
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(7.0)),
         child: Align(
-            alignment: Alignment.center,
-            child: Text(
-              textvoice,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
-            )),
+          alignment: Alignment.center,
+          child: Text(
+            textlist[indexs],
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
+            textAlign: TextAlign.center,
+          ),
+        ),
       );
+
+  void SpeakTest() {
+    print('Đã phát âm');
+    flutterTts.speak(textlist[indexs]);
+  }
+
+  void NextWord() {
+    setState(() {
+      indexs++;
+      inputSection();
+      checkResult();
+      result = 0;
+    });
+  }
+
+  void Finish() {}
 
   Widget btnSection() => Container(
       child: _buildButtonColumn(Colors.green, Colors.greenAccent,
-          Icons.play_arrow, 'PLAY', textvoice));
+          Icons.play_arrow, 'Phát âm', SpeakTest));
+  Widget btnNext() => Container(
+      child: _buildButtonColumn(Colors.blue, Colors.blueAccent, Icons.skip_next,
+          'Tiếp tục', NextWord));
+  Widget btnFinish() => Container(
+      child: _buildButtonColumn(
+          Colors.red, Colors.redAccent, Icons.receipt, 'Hoàn thành', Finish));
 
   Column _buildButtonColumn(Color color, Color splashColor, IconData icon,
-      String label, String textvoice) {
+      String label, Function func) {
     return Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -210,10 +332,7 @@ class _SpeechTopicPageState extends State<SpeechTopicPage> {
               ),
               color: color,
               splashColor: splashColor,
-              onPressed: () {
-                print('Vao day');
-                flutterTts.speak(textvoice);
-              }),
+              onPressed: func),
           Container(
               child: Text(label,
                   style: TextStyle(

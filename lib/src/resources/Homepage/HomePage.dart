@@ -1,9 +1,6 @@
 import 'package:english_app/src/resources/Homepage/Grammar/GrammarMain.dart';
-import 'package:english_app/src/resources/Homepage/Speech/SpeechTopic.dart';
-import 'package:english_app/src/resources/User/PageLogin.dart';
 import 'package:english_app/src/resources/User/ProfileSetting.dart';
 import 'package:english_app/src/resources/Homepage/Vocabulary/VocaMain.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'FunctionPage.dart';
