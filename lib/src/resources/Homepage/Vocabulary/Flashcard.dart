@@ -35,7 +35,14 @@ class _FlashcardState extends State<Flashcard> {
     //LoadingDialog.hideLoadingDialog(context);
 
     //PlayMusic
-    audioCache.loop("audio/background.mp3");
+    audioCache.play("audio/background.mp3");
+  }
+
+  @override
+  void dispose() {
+    audioCache.clear("audio/background.mp3");
+    audioCache.clearCache();
+    super.dispose();
   }
 
   _onEntryAdded(Event event) {
