@@ -29,7 +29,7 @@ class FirAuth {
       //FirebaseUser updatedUser =_fireBaseAuth.currentUser();
       print('USERNAME IS: ${user.displayName}');
 
-      _createUser(user.uid, name, onSuccess, onRegisterError);
+      _createUser(user.uid, name, 'Traditional', onSuccess, onRegisterError);
     }).catchError((err) {
       print("err: " + err.toString());
       _onSignUpErr(err.code, onRegisterError);
@@ -80,6 +80,9 @@ class FirAuth {
     if (user != null) {
       onSuccess();
     }
+    _createUser(
+        user.uid, user.displayName, 'Google', onSuccess, onLoginSocialError);
+
     print("signed in " + user.displayName);
   }
 
@@ -102,20 +105,23 @@ class FirAuth {
     if (user != null) {
       onSuccess();
     }
+    _createUser(
+        user.uid, user.displayName, 'Facebook', onSuccess, onLoginSocialError);
     print("signed in " + user.displayName);
   }
 
   void signOut() async {
     await _fireBaseAuth.signOut().then((_) {
-      googleSignIn.signOut();
+      _fireBaseAuth.signOut();
       print('Đã đăng xuất!');
     });
   }
 
-  _createUser(String userId, String name, Function onSuccess,
+  _createUser(String userId, String name, String type, Function onSuccess,
       Function(String) onRegisterError) {
     var user = Map<String, String>();
     user["name"] = name;
+    user["type"] = type;
     var ref = FirebaseDatabase.instance.reference().child("users");
     ref.child(userId).set(user).then((vl) {
       print("Thêm dữ liệu thành công!");

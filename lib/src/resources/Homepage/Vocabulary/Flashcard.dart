@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:audioplayers/audio_cache.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:english_app/src/resources/Homepage/HomePage.dart';
 import 'package:english_app/src/resources/model/Vocabluary.dart';
 import 'package:english_app/src/resources/widgets/TopBar.dart';
@@ -10,6 +13,9 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class Flashcard extends StatefulWidget {
+  final String topic, name;
+  Flashcard({this.topic, this.name});
+
   @override
   _FlashcardState createState() => _FlashcardState();
 }
@@ -21,21 +27,27 @@ class _FlashcardState extends State<Flashcard> {
   DatabaseReference itemRef;
   bool test = false;
   AudioCache audioCache = new AudioCache();
+  bool startgame = false;
+
+  //Random đáp án
+  final _random = new Random();
+  int next(int min, int max) => min + _random.nextInt(max - min);
+  int keyrand = 0;
+  //Check đáp án
+  int checkres = 0;
 
   @override
   void initState() {
-    //MassageDialog.showMessageDialog(context, 'Đang tải dữ liệu', "Vui lòng đợi");
-
     super.initState();
 
     item = Vocabulary("", "", "", "", "");
     final FirebaseDatabase database = FirebaseDatabase.instance;
-    itemRef = database.reference().child('vocabulary').child('country');
+    itemRef = database.reference().child('vocabulary').child(widget.topic);
     itemRef.onChildAdded.listen(_onEntryAdded);
-    //LoadingDialog.hideLoadingDialog(context);
+    //var element = items[_random.nextInt(items.length)];
 
     //PlayMusic
-    audioCache.play("audio/background.mp3");
+    //audioCache.play("audio/background.mp3");
   }
 
   @override
@@ -48,6 +60,7 @@ class _FlashcardState extends State<Flashcard> {
   _onEntryAdded(Event event) {
     setState(() {
       items.add(Vocabulary.fromSnapshot(event.snapshot));
+      items.shuffle();
     });
   }
 
@@ -55,7 +68,7 @@ class _FlashcardState extends State<Flashcard> {
     return Container(
       width: width,
       height: height / 3,
-      padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 32.0),
+      //padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 32.0),
       decoration: BoxDecoration(
           color: Colors.blue[500],
           borderRadius: BorderRadius.only(
@@ -80,7 +93,14 @@ class _FlashcardState extends State<Flashcard> {
                   ],
                 ),
                 color: Colors.white,
-                onPressed: () {},
+                onPressed: () {
+                  setState(() {
+                    startgame = true;
+                    test = false;
+                    keyrand = next(0, 4);
+                    print(' Key random: $keyrand');
+                  });
+                },
               ),
             )
           : Container(),
@@ -127,6 +147,86 @@ class _FlashcardState extends State<Flashcard> {
     );
   }
 
+//Hàm kiểm tra đáp án
+  Widget checkResult(int index) {
+    return FlipCard(
+      onFlip: () {
+        print("Tap: $index & ${items[index].name}");
+        //Nếu đáp án trùng!
+        if (index == keyrand) {
+          setState(() {
+            checkres = 1;
+            audioCache.play("audio/correct.mp3");
+          });
+        }
+        //Đáp án sai
+        else {
+          setState(() {
+            checkres = 2;
+            audioCache.play("audio/wrong.mp3");
+          });
+        }
+      },
+      front: CachedNetworkImage(
+        imageUrl: items[index].image,
+        fit: BoxFit.scaleDown,
+        placeholder: (_, str) => Container(
+            height: 50,
+            width: 50,
+            child: Center(
+              child: CircularProgressIndicator(),
+            )),
+      ),
+      back: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          Container(
+            child: RaisedButton(
+              child: Icon(
+                Icons.play_circle_outline,
+                size: 20.0,
+                color: Colors.blue,
+              ),
+              color: Colors.white,
+              onPressed: () {
+                flutterTts.speak(items[index].name);
+              },
+            ),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              SizedBox(
+                height: 20.0,
+                child: Text(items[index].name,
+                    style:
+                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+              ),
+              Text('/' + items[index].phonetic + '/',
+                  style: TextStyle(fontSize: 9.0, fontWeight: FontWeight.bold)),
+            ],
+          ),
+          Text(items[index].translate,
+              style: TextStyle(
+                fontSize: 20.0,
+              )),
+        ],
+      ),
+    );
+  }
+
+  NetworkImage check() {
+    if (checkres == 1) {
+      return NetworkImage(
+          "https://firebasestorage.googleapis.com/v0/b/english-app-4b4c8.appspot.com/o/images%2FCorrect.png?alt=media&token=183641db-01a0-4676-aceb-253901a69e2d");
+    } else if (checkres == 2) {
+      return NetworkImage(
+          "https://firebasestorage.googleapis.com/v0/b/english-app-4b4c8.appspot.com/o/images%2FWrong.png?alt=media&token=ce8c8b89-f9b4-4ee0-bc0c-4f22808671c4");
+    } else
+      return NetworkImage("");
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -142,127 +242,230 @@ class _FlashcardState extends State<Flashcard> {
             Align(
                 alignment: Alignment.bottomCenter,
                 child: _buildBottomCardChildren(context)),
-            TopBar('COUNTRY'),
-            Container(
-              padding: EdgeInsets.fromLTRB(30.0, 230.0, 30.0, 210.0),
-              child: Swiper(
-                itemBuilder: (BuildContext context, int index) {
-                  return FlipCard(
-                    direction: FlipDirection.HORIZONTAL, // default
-                    front: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(width: 2.5, color: Colors.blue),
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
-                          boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 1)
-                          ]),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(14.0),
-                            child: FadeInImage.memoryNetwork(
-                              placeholder: kTransparentImage,
-                              image: items[index].image,
-                            ),
-                          ),
-                          Text(
-                            items[index].name,
-                            style: TextStyle(
-                                fontSize: 25.0, fontWeight: FontWeight.bold),
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                '${index + 1}',
-                                style: TextStyle(
-                                    fontSize: 23,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.red),
-                              ),
-                              Text('/' + '${items.length}')
-                            ],
-                          )
-                        ],
+            TopBar(
+                '${widget.name.toUpperCase()}\n (${widget.topic.toLowerCase()})'),
+            startgame
+                ? Stack(
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.fromLTRB(15.0, 200.0, 15.0, 20.0),
+                        child: GridView.count(
+                          crossAxisSpacing: 5,
+                          mainAxisSpacing: 5,
+                          crossAxisCount: 2,
+                          children: List.generate(4, (index) {
+                            return GestureDetector(
+                              onTap: () {
+                                print("Tap: $index & ${items[index].name}");
+                                //Nếu đáp án trùng!
+                                if (index == keyrand) {
+                                  setState(() {
+                                    checkres = 1;
+                                    audioCache.play("audio/correct.mp3");
+                                  });
+                                }
+                                //Đáp án sai
+                                else {
+                                  setState(() {
+                                    checkres = 2;
+                                    audioCache.play("audio/wrong.mp3");
+                                  });
+                                }
+                              },
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                          width: 2.5, color: Colors.blue),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(50)),
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: Colors.black12,
+                                            blurRadius: 1)
+                                      ]),
+                                  child: checkResult(index)),
+                            );
+                          }),
+                        ),
                       ),
-                    ),
-                    back: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(width: 2.5, color: Colors.blue),
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                          boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 1)
-                          ]),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Container(
-                            child: RaisedButton(
-                              child: Icon(
-                                Icons.play_circle_outline,
+                      Container(
+                        padding:
+                            EdgeInsets.only(top: 620.0, bottom: 130, left: 20),
+                        width: width - 20,
+                        child: Container(
+                          width: 90.0,
+                          height: 90.0,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                              image: DecorationImage(image: check())),
+                        ),
+                      ),
+                      Container(
+                        padding:
+                            EdgeInsets.only(top: 720.0, bottom: 80, left: 20),
+                        width: width - 20,
+                        child: RaisedButton(
+                          child: Column(
+                            children: <Widget>[
+                              Icon(
+                                Icons.play_arrow,
                                 size: 60.0,
                                 color: Colors.blue,
                               ),
-                              color: Colors.white,
-                              onPressed: () {
-                                flutterTts.speak(items[index].name);
-                              },
-                            ),
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              SizedBox(
-                                height: 40.0,
-                                child: Text(items[index].name,
-                                    style: TextStyle(
-                                        fontSize: 25.0,
-                                        fontWeight: FontWeight.bold)),
+                              Text(
+                                items[keyrand].name,
+                                style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold),
                               ),
-                              Text('/' + items[index].phonetic + '/',
-                                  style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold)),
                             ],
                           ),
-                          Text(items[index].translate,
-                              style: TextStyle(
-                                fontSize: 28.0,
-                              )),
-                        ],
+                          color: Colors.white,
+                          onPressed: () {
+                            setState(() {
+                              flutterTts.speak(items[keyrand].name);
+                            });
+                          },
+                        ),
                       ),
+                    ],
+                  )
+                : Container(
+                    padding: EdgeInsets.fromLTRB(30.0, 230.0, 30.0, 210.0),
+                    child: Swiper(
+                      itemBuilder: (BuildContext context, int index) {
+                        return FlipCard(
+                          direction: FlipDirection.HORIZONTAL, // default
+                          front: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                border:
+                                    Border.all(width: 2.5, color: Colors.blue),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(50)),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.black12, blurRadius: 1)
+                                ]),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(14.0),
+                                  child: CachedNetworkImage(
+                                    imageUrl: items[index].image,
+                                    fit: BoxFit.scaleDown,
+                                    placeholder: (_, str) => Container(
+                                        height: 50,
+                                        width: 50,
+                                        child: Center(
+                                          child: CircularProgressIndicator(),
+                                        )),
+                                  ),
+                                ),
+                                Text(
+                                  items[index].name,
+                                  style: TextStyle(
+                                      fontSize: 25.0,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      '${index + 1}',
+                                      style: TextStyle(
+                                          fontSize: 23,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.red),
+                                    ),
+                                    Text('/' + '${items.length}')
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                          back: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                border:
+                                    Border.all(width: 2.5, color: Colors.blue),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.black12, blurRadius: 1)
+                                ]),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                Container(
+                                  child: RaisedButton(
+                                    child: Icon(
+                                      Icons.play_circle_outline,
+                                      size: 60.0,
+                                      color: Colors.blue,
+                                    ),
+                                    color: Colors.white,
+                                    onPressed: () {
+                                      flutterTts.speak(items[index].name);
+                                    },
+                                  ),
+                                ),
+                                Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    SizedBox(
+                                      height: 40.0,
+                                      child: Text(items[index].name,
+                                          style: TextStyle(
+                                              fontSize: 25.0,
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                    Text('/' + items[index].phonetic + '/',
+                                        style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold)),
+                                  ],
+                                ),
+                                Text(items[index].translate,
+                                    style: TextStyle(
+                                      fontSize: 28.0,
+                                    )),
+                              ],
+                            ),
+                          ),
+                          onFlip: () {
+                            audioCache.play("audio/flipcard.mp3", volume: 0.2);
+                          },
+                        );
+                      },
+                      control: new SwiperControl(),
+                      loop: false,
+                      pagination: new SwiperPagination(),
+                      itemCount: items.length,
+                      viewportFraction: 0.8,
+                      scale: 0.6,
+                      onIndexChanged: (int index) {
+                        print('$index');
+                        if (index == items.length - 1) {
+                          setState(() {
+                            test = true;
+                          });
+                        } else {
+                          setState(() {
+                            test = false;
+                          });
+                        }
+                      },
                     ),
-                    onFlip: () {
-                      audioCache.play("audio/flipcard.mp3", volume: 0.2);
-                    },
-                  );
-                },
-                control: new SwiperControl(),
-                loop: false,
-                pagination: new SwiperPagination(),
-                itemCount: items.length,
-                viewportFraction: 0.8,
-                scale: 0.6,
-                onIndexChanged: (int index) {
-                  print('$index');
-                  if (index == items.length - 1) {
-                    setState(() {
-                      test = true;
-                    });
-                  } else {
-                    setState(() {
-                      test = false;
-                    });
-                  }
-                },
-              ),
-            ),
+                  ),
           ],
         ),
       ),

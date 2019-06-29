@@ -7,6 +7,7 @@ import 'FunctionPage.dart';
 import 'package:english_app/src/resources/Homepage/Speech/SpeechMain.dart';
 
 class HomePage extends StatefulWidget {
+  
   @override
   _HomePageState createState() => new _HomePageState();
 }

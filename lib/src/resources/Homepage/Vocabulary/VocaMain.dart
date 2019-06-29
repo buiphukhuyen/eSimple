@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:english_app/src/resources/Homepage/HomePage.dart';
 import 'package:english_app/src/resources/Homepage/Vocabulary/Flashcard.dart';
 import 'package:english_app/src/resources/model/TopicVoca.dart';
@@ -14,15 +15,22 @@ class _VocaMainPageState extends State<VocaMainPage> {
   List<TopicVoca> items = List();
   TopicVoca item;
   DatabaseReference itemRef;
+  bool load = true;
 
-  @override
-  void initState() {
-    super.initState();
+  Future<void> getdata() async {
     item = TopicVoca("", 0, "", "", 0, 0);
     final FirebaseDatabase database = FirebaseDatabase.instance;
     itemRef = database.reference().child('vocabulary');
     itemRef.onChildAdded.listen(_onEntryAdded);
-    print('${item.name}');
+    setState(() {
+      load = false;
+    });
+  }
+
+  @override
+  void initState() {
+    getdata();
+    super.initState();
   }
 
   _onEntryAdded(Event event) {
@@ -84,68 +92,78 @@ class _VocaMainPageState extends State<VocaMainPage> {
       ),
     );
   }
-
   Widget _buildItemCardChild(TopicVoca item, BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => Flashcard()));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => Flashcard(
+                  topic: item.topic,
+                  name: item.name,
+                )));
       },
-      child: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-              image: NetworkImage(item.image),
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.bottomCenter),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: load
+          ? CircularProgressIndicator()
+          : Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    item.name,
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          item.name,
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.pie_chart),
+                          color: Colors.blue,
+                        ),
+                      ]),
+                  CachedNetworkImage(
+                    imageUrl: item.image,
+                    fit: BoxFit.scaleDown,
+                    height: 140,
+                    width: 200,
+                    placeholder: (_, str) => Container(
+                        height: 50,
+                        width: 50,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        )),
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.pie_chart),
-                    color: Colors.blue,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        item.length.toString(),
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        item.percent.toString(),
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                ]),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  item.length.toString(),
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  item.percent.toString(),
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
     );
   }
 
   Widget _buildItemCart(TopicVoca item, BuildContext context) {
     return Container(
-      width: 100.0,
-      height: 185.0,
+      // width: 100.0,
+      //height: 185.0,
       padding: EdgeInsets.only(bottom: 15.0, left: 15.0, right: 15.0),
       margin: EdgeInsets.only(left: 32.0, right: 32.0, top: 4.0, bottom: 4.0),
       decoration: BoxDecoration(

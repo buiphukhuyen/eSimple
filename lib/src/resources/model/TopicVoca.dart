@@ -20,6 +20,7 @@ class TopicVoca {
         percent = snapshot.value["percent"];
   toJson() {
     return {
+      "topic": topic,
       "index": index,
       "name": name,
       "image": image,

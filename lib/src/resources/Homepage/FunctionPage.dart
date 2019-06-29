@@ -1,3 +1,4 @@
+import 'package:english_app/src/resources/Chatbot/Chatbot.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -134,11 +135,21 @@ class FunctionPage extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Image(image: AssetImage("assets/images/Bot_Support.gif"), height: 169.0, width: 169.0,)
-              ],
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Chatbot()));
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Image(
+                    image: AssetImage("assets/images/Bot_Support.gif"),
+                    height: 169.0,
+                    width: 169.0,
+                  )
+                ],
+              ),
             ),
           ),
         ],

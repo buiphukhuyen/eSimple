@@ -16,7 +16,7 @@ class TopBar extends StatelessWidget {
         painter: CurvesPainter(),
       ),
       Padding(
-        padding: const EdgeInsets.only(top: 80.0),
+        padding: const EdgeInsets.only(top: 70.0),
         child: Align(
           alignment: Alignment.topCenter,
           child: Text(
