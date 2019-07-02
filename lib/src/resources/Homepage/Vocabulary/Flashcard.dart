@@ -3,14 +3,17 @@ import 'dart:math';
 import 'package:audioplayers/audio_cache.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:english_app/src/resources/Homepage/HomePage.dart';
+import 'package:english_app/src/resources/Homepage/Vocabulary/FinishVoca.dart';
 import 'package:english_app/src/resources/model/Vocabluary.dart';
 import 'package:english_app/src/resources/widgets/TopBar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flip_card/flip_card.dart';
+import 'package:flutter_dialogflow/flutter_dialogflow.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 
 class Flashcard extends StatefulWidget {
   final String topic, name;
@@ -34,7 +37,12 @@ class _FlashcardState extends State<Flashcard> {
   int next(int min, int max) => min + _random.nextInt(max - min);
   int keyrand = 0;
   //Check đáp án
-  int checkres = 0;
+  int checkres = 0; //=1: đúng, =2: sai
+  //Phát âm thanh nếu lật flashcard 1 lần (lần lẻ)
+  int checkvol = 1;
+
+  //Next Question
+  int nextqs = 0; //Next: 1 , Finish: 2
 
   @override
   void initState() {
@@ -77,7 +85,7 @@ class _FlashcardState extends State<Flashcard> {
       child: test
           ? Container(
               padding: EdgeInsets.only(
-                  top: 120.0, bottom: 60.0, right: 70.0, left: 70.0),
+                  top: 120.0, bottom: 80.0, right: 70.0, left: 70.0),
               child: RaisedButton(
                 child: Column(
                   children: <Widget>[
@@ -147,6 +155,7 @@ class _FlashcardState extends State<Flashcard> {
     );
   }
 
+  bool tests = false;
 //Hàm kiểm tra đáp án
   Widget checkResult(int index) {
     return FlipCard(
@@ -156,26 +165,25 @@ class _FlashcardState extends State<Flashcard> {
         if (index == keyrand) {
           setState(() {
             checkres = 1;
-            audioCache.play("audio/correct.mp3");
+            audioCache.play("audio/correct.mp3", volume: 0.2);
+            nextqs = 1;
           });
         }
         //Đáp án sai
         else {
           setState(() {
             checkres = 2;
-            audioCache.play("audio/wrong.mp3");
+            audioCache.play("audio/wrong.mp3", volume: 0.1);
+            nextqs = 0;
           });
         }
       },
-      front: CachedNetworkImage(
-        imageUrl: items[index].image,
-        fit: BoxFit.scaleDown,
-        placeholder: (_, str) => Container(
-            height: 50,
-            width: 50,
-            child: Center(
-              child: CircularProgressIndicator(),
-            )),
+      flipOnTouch: false,
+      front: FadeInImage.memoryNetwork(
+        repeat: ImageRepeat.noRepeat,
+        placeholder: kTransparentImage,
+        fadeInDuration: Duration(milliseconds: 100),
+        image: items[index].image,
       ),
       back: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -203,7 +211,7 @@ class _FlashcardState extends State<Flashcard> {
                     style:
                         TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
               ),
-              Text('/' + items[index].phonetic + '/',
+              Text('/' + items[index].phonetic.toString() + '/',
                   style: TextStyle(fontSize: 9.0, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -216,15 +224,66 @@ class _FlashcardState extends State<Flashcard> {
     );
   }
 
-  NetworkImage check() {
+  ImageProvider check() {
     if (checkres == 1) {
-      return NetworkImage(
-          "https://firebasestorage.googleapis.com/v0/b/english-app-4b4c8.appspot.com/o/images%2FCorrect.png?alt=media&token=183641db-01a0-4676-aceb-253901a69e2d");
+      return AssetImage("assets/images/Correct.png");
     } else if (checkres == 2) {
-      return NetworkImage(
-          "https://firebasestorage.googleapis.com/v0/b/english-app-4b4c8.appspot.com/o/images%2FWrong.png?alt=media&token=ce8c8b89-f9b4-4ee0-bc0c-4f22808671c4");
+      return AssetImage("assets/images/Wrong.png");
     } else
-      return NetworkImage("");
+      return AssetImage("");
+  }
+
+  int randlist = 4;
+  double countqs = 0.0;
+
+  Widget button() {
+    if (nextqs == 1) {
+      return Column(
+        children: <Widget>[
+          Icon(
+            Icons.navigate_next,
+            size: 60.0,
+            color: Colors.green,
+          ),
+          Text(
+            "Tiếp theo",
+            style: TextStyle(
+                color: Colors.green,
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold),
+          ),
+        ],
+      );
+    } else if (nextqs == 0) {
+      return Column(
+        children: <Widget>[
+          Icon(
+            Icons.play_arrow,
+            size: 60.0,
+            color: Colors.blue,
+          ),
+          Text(
+            items[keyrand].name,
+            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+          ),
+        ],
+      );
+    } else {
+      return Column(
+        children: <Widget>[
+          Icon(
+            Icons.receipt,
+            size: 60.0,
+            color: Colors.red,
+          ),
+          Text(
+            "Hoàn thành",
+            style: TextStyle(
+                color: Colors.red, fontSize: 18.0, fontWeight: FontWeight.bold),
+          ),
+        ],
+      );
+    }
   }
 
   @override
@@ -247,13 +306,24 @@ class _FlashcardState extends State<Flashcard> {
             startgame
                 ? Stack(
                     children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(23.0, 210, 15.0, 200),
+                        child: LinearPercentIndicator(
+                          width: MediaQuery.of(context).size.width - 50,
+                          //animation: true,
+                          lineHeight: 15.0,
+                          animationDuration: 1000,
+                          percent: 0.2 * countqs,
+                          progressColor: Colors.blue,
+                        ),
+                      ),
                       Container(
                         padding: EdgeInsets.fromLTRB(15.0, 200.0, 15.0, 20.0),
                         child: GridView.count(
                           crossAxisSpacing: 5,
                           mainAxisSpacing: 5,
                           crossAxisCount: 2,
-                          children: List.generate(4, (index) {
+                          children: List.generate(randlist, (index) {
                             return GestureDetector(
                               onTap: () {
                                 print("Tap: $index & ${items[index].name}");
@@ -261,30 +331,44 @@ class _FlashcardState extends State<Flashcard> {
                                 if (index == keyrand) {
                                   setState(() {
                                     checkres = 1;
-                                    audioCache.play("audio/correct.mp3");
+                                    audioCache.play("audio/correct.mp3",
+                                        volume: 0.2);
+                                    nextqs = 1;
                                   });
+                                  if (countqs == 5.0) {
+                                    setState(() {
+                                      nextqs = 2;
+                                    });
+                                  }
                                 }
                                 //Đáp án sai
                                 else {
                                   setState(() {
                                     checkres = 2;
-                                    audioCache.play("audio/wrong.mp3");
+                                    audioCache.play("audio/wrong.mp3",
+                                        volume: 0.1);
+                                    nextqs = 0;
                                   });
                                 }
                               },
                               child: Container(
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border: Border.all(
-                                          width: 2.5, color: Colors.blue),
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(50)),
-                                      boxShadow: [
-                                        BoxShadow(
-                                            color: Colors.black12,
-                                            blurRadius: 1)
-                                      ]),
-                                  child: checkResult(index)),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        width: 2.5, color: Colors.blue),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(50)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.black12, blurRadius: 1)
+                                    ]),
+                                child: FadeInImage.memoryNetwork(
+                                  repeat: ImageRepeat.noRepeat,
+                                  placeholder: kTransparentImage,
+                                  fadeInDuration: Duration(milliseconds: 1),
+                                  image: items[index].image,
+                                ),
+                              ),
                             );
                           }),
                         ),
@@ -307,26 +391,30 @@ class _FlashcardState extends State<Flashcard> {
                             EdgeInsets.only(top: 720.0, bottom: 80, left: 20),
                         width: width - 20,
                         child: RaisedButton(
-                          child: Column(
-                            children: <Widget>[
-                              Icon(
-                                Icons.play_arrow,
-                                size: 60.0,
-                                color: Colors.blue,
-                              ),
-                              Text(
-                                items[keyrand].name,
-                                style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
+                          child: button(),
                           color: Colors.white,
                           onPressed: () {
-                            setState(() {
-                              flutterTts.speak(items[keyrand].name);
-                            });
+                            if (countqs == 5.0) {
+                              countqs = 0.0;
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => FinishVoca()));
+                              print("Hoan thanh phan thi");
+                            }
+                            if (nextqs == 0)
+                              setState(() {
+                                flutterTts.speak(items[keyrand].name);
+                              });
+                            else
+                              setState(() {
+                                checkres = 0;
+                                //Trộn lại list
+                                items.shuffle();
+                                nextqs = 0;
+                                //Random đáp án
+                                keyrand = next(0, 4);
+                                //Tăng câu trả lời đúng
+                                countqs++;
+                              });
                           },
                         ),
                       ),
