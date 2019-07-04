@@ -1,18 +1,17 @@
-import 'package:english_app/src/resources/Homepage/Vocabulary/VocaMain.dart';
+import 'package:english_app/src/resources/Homepage/Speech/SpeechMain.dart';
 import 'package:english_app/src/resources/model/TopicVoca.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:english_app/src/resources/widgets/TopBar.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
-class FinishVoca extends StatefulWidget {
+class FinishSpeech extends StatefulWidget {
   @override
-  _FinishVocaState createState() => _FinishVocaState();
+  _FinishSpeechState createState() => _FinishSpeechState();
   final String name;
-  FinishVoca({this.name});
+  FinishSpeech({this.name});
 }
 
-class _FinishVocaState extends State<FinishVoca> {
+class _FinishSpeechState extends State<FinishSpeech> {
   List<TopicVoca> items = List();
   TopicVoca item;
 
@@ -97,7 +96,7 @@ class _FinishVocaState extends State<FinishVoca> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            'TỪ VỰNG',
+                            'PHÁT ÂM',
                             style: TextStyle(
                                 fontSize: 24.0,
                                 letterSpacing: 1.5,
@@ -124,7 +123,7 @@ class _FinishVocaState extends State<FinishVoca> {
                           ),
                           Center(
                             child: Text(
-                              widget.name.toUpperCase(),
+                              "/s/ /sh/ /z/",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontSize: 14.0,
@@ -162,7 +161,7 @@ class _FinishVocaState extends State<FinishVoca> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
                             Text(
-                              'SỐ TỪ VỰNG\nTRONG CHỦ ĐỀ',
+                              'SỐ TỪ PHÁT ÂM\nTRONG CHỦ ĐỀ',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.grey,
@@ -212,7 +211,7 @@ class _FinishVocaState extends State<FinishVoca> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
                             Text(
-                              'TỔNG TỪ VỰNG\nĐÃ HỌC',
+                              'TỔNG TỪ PHÁT ÂM\nĐÃ LUYỆN',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.grey,
@@ -268,13 +267,13 @@ class _FinishVocaState extends State<FinishVoca> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => VocaMainPage()));
+                                builder: (context) => SpeechMainPage()));
                       },
                       child: Container(
                         width: 250,
                         height: 100,
                         decoration: BoxDecoration(
-                            color: Colors.blue[500],
+                            color: Colors.blue[200],
                             borderRadius: BorderRadius.circular(8.0),
                             boxShadow: [
                               BoxShadow(
@@ -284,10 +283,10 @@ class _FinishVocaState extends State<FinishVoca> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
-                            Image.asset("assets/images/Voca/Voca_Country.png",
+                            Image.asset("assets/images/Speech/Numbers/2.png",
                                 width: 60),
                             Text(
-                              "CÁC QUỐC GIA",
+                              "ENDING SOUNDS",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16.0,

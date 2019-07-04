@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:english_app/src/resources/widgets/TopBar.dart';
 
-class GrammarMainPage extends StatelessWidget {
+class GamerMainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -10,7 +10,7 @@ class GrammarMainPage extends StatelessWidget {
         child: Stack(
           children: <Widget>[
             
-            TopBar('HỌC NGỮ PHÁP QUA VÍ DỤ'),
+            TopBar('TƯƠNG TÁC BẠN BÉ'),
           ],
         ),
       ),

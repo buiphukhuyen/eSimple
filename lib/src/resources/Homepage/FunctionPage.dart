@@ -40,7 +40,7 @@ class FunctionPage extends StatelessWidget {
                       color: Colors.purple,
                       image: DecorationImage(
                           image: NetworkImage(
-                              "https://scontent-hkg3-1.xx.fbcdn.net/v/t1.0-9/12341533_459361484264388_7894916608898433832_n.jpg?_nc_cat=103&_nc_oc=AQme9LkboGz8e7bdKl9J4IEXyGLg-VwTCRiWJ-M7UvyEPHa6UpESz4gwfz-FL9tJHtw&_nc_ht=scontent-hkg3-1.xx&oh=563b46dd16d935eb829c1a7910527269&oe=5D6AA9B1"))),
+                              "https://scontent.fsgn1-1.fna.fbcdn.net/v/t1.0-9/12341533_459361484264388_7894916608898433832_n.jpg?_nc_cat=103&_nc_oc=AQmOxrC7AsIvdHrZEX2-GCEgj910-Vz9rIWBHnESy3IeIHpCIV0PJ23qKKL9-a3wAHw&_nc_ht=scontent.fsgn1-1.fna&oh=600879dc01109f32a4f870c37bbf558f&oe=5DB9C3B1"))),
                 ),
               ]),
           SizedBox(
@@ -123,8 +123,13 @@ class FunctionPage extends StatelessWidget {
                     Colors.grey[400],
                     context,
                     2),
-                FuncCard('assets/images/Study_Music.png', 'HỌC\nTIẾNG ANH',
-                    'BẰNG BÀI HÁT', Colors.pink[400], context, 3),
+                FuncCard(
+                    'assets/images/Study_Music.png',
+                    'LUYỆN NGHE\nTIẾNG ANH',
+                    'CHUẨN',
+                    Colors.pink[400],
+                    context,
+                    3),
                 FuncCard('assets/images/Study_Gaming.png', 'TƯƠNG TÁC\nBẠN BÈ',
                     '', Colors.red[400], context, 4),
               ],

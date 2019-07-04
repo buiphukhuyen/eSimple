@@ -1,4 +1,6 @@
+import 'package:english_app/src/resources/Homepage/Game/GrammarMain.dart';
 import 'package:english_app/src/resources/Homepage/Grammar/GrammarMain.dart';
+import 'package:english_app/src/resources/Homepage/Listen/ListenMain.dart';
 import 'package:english_app/src/resources/User/ProfileSetting.dart';
 import 'package:english_app/src/resources/Homepage/Vocabulary/VocaMain.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +9,6 @@ import 'FunctionPage.dart';
 import 'package:english_app/src/resources/Homepage/Speech/SpeechMain.dart';
 
 class HomePage extends StatefulWidget {
-  
   @override
   _HomePageState createState() => new _HomePageState();
 }
@@ -20,8 +21,6 @@ class _HomePageState extends State<HomePage> {
     FunctionPage(),
     ProfileSetting()
   ];
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +84,8 @@ final pageOpen = [
   VocaMainPage(),
   GrammarMainPage(),
   SpeechMainPage(),
+  ListenMainPage(),
+  GamerMainPage(),
 ];
 
 Widget FuncCard(String image, String toptext, String bottext, Color colors,

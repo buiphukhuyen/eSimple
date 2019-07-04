@@ -9,7 +9,6 @@ class GrammarMainPage extends StatelessWidget {
       body: Container(
         child: Stack(
           children: <Widget>[
-            
             TopBar('HỌC NGỮ PHÁP QUA VÍ DỤ'),
           ],
         ),

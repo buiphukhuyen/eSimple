@@ -1,3 +1,5 @@
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:english_app/src/resources/Homepage/HomePage.dart';
 import 'package:english_app/src/resources/Homepage/Vocabulary/Flashcard.dart';
@@ -5,6 +7,7 @@ import 'package:english_app/src/resources/model/TopicVoca.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:english_app/src/resources/widgets/TopBar.dart';
+import 'package:shimmer/shimmer.dart';
 
 class VocaMainPage extends StatefulWidget {
   @override
@@ -16,6 +19,25 @@ class _VocaMainPageState extends State<VocaMainPage> {
   TopicVoca item;
   DatabaseReference itemRef;
   bool load = true;
+
+  bool playmusic = false;
+
+  AudioPlayer audioPlayer = AudioPlayer();
+
+  play() async {
+    int result = await audioPlayer.play(
+        "https://firebasestorage.googleapis.com/v0/b/english-app-4b4c8.appspot.com/o/audio%2Fbackground.mp3?alt=media&token=01b876f2-e6d2-430a-87c9-67624e7893a2");
+    if (result == 1) {
+      print('Đã phát nhạc!');
+    }
+  }
+
+  stop() async {
+    int result = await audioPlayer.stop();
+    if (result == 1) {
+      print('Đã tắt nhạc!');
+    }
+  }
 
   Future<void> getdata() async {
     item = TopicVoca("", 0, "", "", 0, 0);
@@ -81,9 +103,20 @@ class _VocaMainPageState extends State<VocaMainPage> {
               ),
               IconButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  if (playmusic == false) {
+                    setState(() {
+                      play();
+                      playmusic = true;
+                    });
+                  } else {
+                    setState(() {
+                      stop();
+                      playmusic = false;
+                    });
+                  }
                 },
-                icon: Icon(Icons.settings),
+                icon:
+                    playmusic ? Icon(Icons.volume_up) : Icon(Icons.volume_mute),
                 color: Colors.white,
               ),
             ],
@@ -92,6 +125,7 @@ class _VocaMainPageState extends State<VocaMainPage> {
       ),
     );
   }
+
   Widget _buildItemCardChild(TopicVoca item, BuildContext context) {
     return InkWell(
       onTap: () {
@@ -101,62 +135,60 @@ class _VocaMainPageState extends State<VocaMainPage> {
                   name: item.name,
                 )));
       },
-      child: load
-          ? CircularProgressIndicator()
-          : Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
+      child: Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(
-                          item.name,
-                          style: TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.pie_chart),
-                          color: Colors.blue,
-                        ),
-                      ]),
-                  CachedNetworkImage(
-                    imageUrl: item.image,
-                    fit: BoxFit.scaleDown,
-                    height: 140,
-                    width: 200,
-                    placeholder: (_, str) => Container(
-                        height: 50,
-                        width: 50,
-                        child: Center(
-                          child: CircularProgressIndicator(),
-                        )),
+                  Text(
+                    item.name,
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        item.length.toString(),
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        item.percent.toString(),
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.pie_chart),
+                    color: Colors.blue,
                   ),
-                ],
-              ),
+                ]),
+            CachedNetworkImage(
+              imageUrl: item.image,
+              fit: BoxFit.scaleDown,
+              height: 140,
+              width: 200,
+              placeholder: (_, str) => Container(
+                  height: 50,
+                  width: 50,
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  )),
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  item.length.toString(),
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  item.percent.toString(),
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -175,15 +207,20 @@ class _VocaMainPageState extends State<VocaMainPage> {
   }
 
   Widget _buildCardList(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(bottom: 90.0, top: 150.0),
-      child: ListView.builder(
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            var item = items.elementAt(index);
-            return _buildItemCart(item, context);
-          }),
-    );
+    return load
+        ? Padding(
+            padding: EdgeInsets.only(top: 180.0),
+            child: ShimmerList(),
+          )
+        : Container(
+            padding: EdgeInsets.only(bottom: 90.0, top: 150.0),
+            child: ListView.builder(
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  var item = items.elementAt(index);
+                  return _buildItemCart(item, context);
+                }),
+          );
   }
 
   @override
@@ -206,6 +243,80 @@ class _VocaMainPageState extends State<VocaMainPage> {
             TopBar('HỌC TỪ VỰNG - FLASHCARD'),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ShimmerList extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    int offset = 0;
+    int time = 800;
+
+    return SafeArea(
+      child: ListView.builder(
+        itemCount: 3,
+        itemBuilder: (BuildContext context, int index) {
+          offset += 5;
+          time = 800 + offset;
+
+          print(time);
+
+          return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15),
+              child: Shimmer.fromColors(
+                highlightColor: Colors.white,
+                baseColor: Colors.grey[300],
+                child: ShimmerLayout(),
+                period: Duration(milliseconds: time),
+              ));
+        },
+      ),
+    );
+  }
+}
+
+class ShimmerLayout extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    double containerWidth = 280;
+    double containerHeight = 15;
+
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 7.5),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Container(
+            height: 100,
+            width: 100,
+            color: Colors.grey,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                height: containerHeight,
+                width: containerWidth,
+                color: Colors.grey,
+              ),
+              SizedBox(height: 5),
+              Container(
+                height: containerHeight,
+                width: containerWidth,
+                color: Colors.grey,
+              ),
+              SizedBox(height: 5),
+              Container(
+                height: containerHeight,
+                width: containerWidth * 0.75,
+                color: Colors.grey,
+              )
+            ],
+          )
+        ],
       ),
     );
   }

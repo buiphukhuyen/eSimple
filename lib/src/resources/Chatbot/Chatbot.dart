@@ -53,7 +53,7 @@ class _HomePageDialogflowV2 extends State<Chatbot> {
 
     Dialogflow dialogflow = Dialogflow(
       authGoogle: authGoogle,
-      language: Language.ENGLISH,
+      language: Language.english,
     );
     AIResponse response = await dialogflow.detectIntent(query);
     ChatMessage message = ChatMessage(
@@ -61,7 +61,7 @@ class _HomePageDialogflowV2 extends State<Chatbot> {
           CardDialogflow(
             response.getListMessage()[0],
           ).title,
-      name: "Bot",
+      name: "eSimple",
       type: false,
     );
     setState(() {
@@ -73,7 +73,7 @@ class _HomePageDialogflowV2 extends State<Chatbot> {
     _textController.clear();
     ChatMessage message = ChatMessage(
       text: text,
-      name: "Aseem",
+      name: "Bùi Phú Khuyên",
       type: true,
     );
     setState(() {
@@ -131,11 +131,17 @@ class ChatMessage extends StatelessWidget {
           children: <Widget>[
             Text(
               this.name,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17.0,
+                  color: Colors.blue),
             ),
             Container(
               margin: const EdgeInsets.only(top: 5.0),
-              child: Text(text),
+              child: Text(
+                text,
+                style: TextStyle(fontSize: 16.0),
+              ),
             ),
           ],
         ),
@@ -149,10 +155,17 @@ class ChatMessage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
-            Text(this.name, style: Theme.of(context).textTheme.subhead),
+            Text(this.name,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17.0,
+                    color: Colors.blue)),
             Container(
               margin: const EdgeInsets.only(top: 5.0),
-              child: Text(text),
+              child: Text(
+                text,
+                style: TextStyle(fontSize: 16.0),
+              ),
             ),
           ],
         ),
@@ -160,7 +173,11 @@ class ChatMessage extends StatelessWidget {
       Container(
         margin: const EdgeInsets.only(left: 16.0),
         child: CircleAvatar(
-          child: Text(this.name[0]),
+          backgroundImage: NetworkImage(
+              "https://scontent.fsgn1-1.fna.fbcdn.net/v/t1.0-9/12341533_459361484264388_7894916608898433832_n.jpg?_nc_cat=103&_nc_oc=AQmOxrC7AsIvdHrZEX2-GCEgj910-Vz9rIWBHnESy3IeIHpCIV0PJ23qKKL9-a3wAHw&_nc_ht=scontent.fsgn1-1.fna&oh=600879dc01109f32a4f870c37bbf558f&oe=5DB9C3B1"),
+          /*Text(
+            this.name[0],
+            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),*/
         ),
       ),
     ];

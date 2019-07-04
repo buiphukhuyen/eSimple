@@ -164,31 +164,30 @@ class _PageLoginState extends State<PageLogin> {
                               StreamBuilder(
                                 stream: bloc.emailStream,
                                 builder: (context, snapshot) => TextField(
-                                      onChanged: bloc.changeEmail,
-                                      style: TextStyle(
-                                          fontSize: 18.0, color: Colors.black),
-                                      controller: _emailController,
-                                      decoration: InputDecoration(
-                                        labelText: "Địa chỉ Email",
-                                        errorText: snapshot.hasError
-                                            ? snapshot.error
-                                            : null,
-                                        prefixIcon: snapshot.hasError
-                                            ? Icon(
-                                                Icons.email,
-                                                color: Colors.red,
-                                              )
-                                            : Icon(Icons.email),
-                                        border: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Color(0xffCED0D2),
-                                              width: 1),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(6)),
-                                        ),
-                                      ),
-                                      keyboardType: TextInputType.emailAddress,
+                                  onChanged: bloc.changeEmail,
+                                  style: TextStyle(
+                                      fontSize: 18.0, color: Colors.black),
+                                  controller: _emailController,
+                                  decoration: InputDecoration(
+                                    labelText: "Địa chỉ Email",
+                                    errorText: snapshot.hasError
+                                        ? snapshot.error
+                                        : null,
+                                    prefixIcon: snapshot.hasError
+                                        ? Icon(
+                                            Icons.email,
+                                            color: Colors.red,
+                                          )
+                                        : Icon(Icons.email),
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Color(0xffCED0D2), width: 1),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(6)),
                                     ),
+                                  ),
+                                  keyboardType: TextInputType.emailAddress,
+                                ),
                               ),
                               SizedBox(
                                 height: ScreenUtil.getInstance().setHeight(30),
@@ -200,39 +199,37 @@ class _PageLoginState extends State<PageLogin> {
                                     StreamBuilder(
                                       stream: bloc.passStream,
                                       builder: (context, snapshot) => TextField(
-                                            obscureText:
-                                                !_showpass, //Security password
-                                            controller: _passController,
+                                        obscureText:
+                                            !_showpass, //Security password
+                                        controller: _passController,
 
-                                            style: TextStyle(
-                                                fontSize: 18.0,
-                                                color: Colors.black),
-                                            decoration: InputDecoration(
-                                                labelText: "Mật khẩu",
-                                                errorText: snapshot.hasError
-                                                    ? snapshot.error
-                                                    : null,
-                                                prefixIcon: snapshot.hasError
-                                                    ? Icon(
-                                                        Icons.lock,
-                                                        color: Colors.red,
-                                                      )
-                                                    : Icon(Icons.lock),
-                                                border: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Color(0xffCED0D2),
-                                                      width: 1),
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(6)),
-                                                ),
-                                                suffixIcon: GestureDetector(
-                                                    onTap: onToggleShowPass,
-                                                    child: Icon(_showpass
-                                                        ? Icons.visibility
-                                                        : Icons
-                                                            .visibility_off))),
-                                          ),
+                                        style: TextStyle(
+                                            fontSize: 18.0,
+                                            color: Colors.black),
+                                        decoration: InputDecoration(
+                                            labelText: "Mật khẩu",
+                                            errorText: snapshot.hasError
+                                                ? snapshot.error
+                                                : null,
+                                            prefixIcon: snapshot.hasError
+                                                ? Icon(
+                                                    Icons.lock,
+                                                    color: Colors.red,
+                                                  )
+                                                : Icon(Icons.lock),
+                                            border: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Color(0xffCED0D2),
+                                                  width: 1),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(6)),
+                                            ),
+                                            suffixIcon: GestureDetector(
+                                                onTap: onToggleShowPass,
+                                                child: Icon(_showpass
+                                                    ? Icons.visibility
+                                                    : Icons.visibility_off))),
+                                      ),
                                     ),
                                   ],
                                 ),

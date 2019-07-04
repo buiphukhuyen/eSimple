@@ -1,6 +1,5 @@
-import 'dart:math';
-
 import 'package:audioplayers/audio_cache.dart';
+import 'package:english_app/src/resources/Homepage/Speech/FinishSpeech.dart';
 import 'package:english_app/src/resources/Homepage/Speech/LessionsUI.dart';
 import 'package:flutter/material.dart';
 import 'package:english_app/src/resources/widgets/TopBar.dart';
@@ -18,6 +17,7 @@ class _SpeechTopicPageState extends State<SpeechTopicPage> {
   SpeechRecognition _speechRecognition;
   bool _isAvailable = false;
   bool _isListening = false;
+
   List<String> textlist = [
     'please',
     'excuse me',
@@ -156,7 +156,7 @@ class _SpeechTopicPageState extends State<SpeechTopicPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         btnSection(),
-                        if (result == 2 && finish==false) btnNext(),
+                        if (result == 2 && finish == false) btnNext(),
                         if (finish == true) btnFinish(),
                       ],
                     ),
@@ -307,7 +307,10 @@ class _SpeechTopicPageState extends State<SpeechTopicPage> {
     });
   }
 
-  void Finish() {}
+  void Finish() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => FinishSpeech()));
+  }
 
   Widget btnSection() => Container(
       child: _buildButtonColumn(Colors.green, Colors.greenAccent,

@@ -39,6 +39,7 @@ dependencies:
   transparent_image: ^1.0.0
   cached_network_image: ^0.8.0
   flutter_dialogflow: ^0.1.2
+  shimmer: ^1.0.0
   
 dev_dependencies:
   flutter_test:
