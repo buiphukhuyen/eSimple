@@ -80,6 +80,7 @@ Sau khi người dùng click vào 1 chủ đề nào đó sẽ hiện ra một t
 ![](media/7.png)
 
 + Sau khi click vào thẻ FlashCard sẽ hiện ra một dòng phiên âm từ vựng đó và một button khi click vào sẽ nghe được phát âm của từ vựng đó:
+
 ![](media/8.png)
 
 
