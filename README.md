@@ -6,11 +6,7 @@
 Công cụ, Ngôn ngữ sử dụng:
 
 -   Flutter
-
 -   Firebase (Authentication & Realtime Database)
-
--   Wordpress
-
 
 
 ## **Đăng ký**
@@ -66,8 +62,6 @@ Lưu ý: các mục (*) là bắt buộc nhập, giả sử người dùng khôn
 
 + Đây là phần quản lý của người dùng. Người dùng có thể thay đổi tài khoản, cập nhật thông tin, hình ảnh của mình, theo dõi tiến trình học
 + Nếu có vấn đề gì về ứng dụng thì có thể gửi thư góp ý hoặc liên hệ trực tiếp để được hổ trợ.
-
-
 
 ![](media/5.png)
 
